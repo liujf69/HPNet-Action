@@ -17,7 +17,7 @@ def get_parser():
     parser.add_argument(
         '--root_output_path', 
         type = str,
-        default = '/data/liujinfu/dataset/kinetics_400/Process_Code_ljf/output/person')
+        default = '/data/liujinfu/dataset/kinetics_400/Process_Code_ljf/output/train_person')
     parser.add_argument(
         '--raw_csv_path', 
         type = str,
@@ -36,8 +36,8 @@ def get_parser():
         default = './pretrained/coco128.yaml')
     parser.add_argument(
         '--debug', 
-        type = bool,
-        default = False)
+        type = str,
+        default = "False")
     return parser
 
 class Detect_Person():
@@ -75,7 +75,7 @@ class Detect_Person():
     def detect_human(self, frame_img, model, time):
         img = letterbox(frame_img, (640, 640), stride=model.stride, auto=model.pt)[0]
         img = img.transpose((2, 0, 1))[::-1]  # HWC to CHW, BGR to RGB
-        img = np.ascontiguousarray(img) 
+        img = np.ascontiguousarray(img)
 
         img = torch.from_numpy(img).to(self.device)
         img = img.half() if model.fp16 else img.float()  # uint8 to fp16/32
@@ -134,6 +134,13 @@ class Detect_Person():
             img = img_frame[y1:y2, x1:x2, :]
             Num = 2
             return img, Num
+
+def find_video_name(root_video_path, label, youtube_id):
+    video_path = os.path.join(root_video_path, label)
+    video_names = os.listdir(video_path)
+    for idx, video_name in enumerate(video_names):
+        if(video_name[:11] == youtube_id):
+            return video_name
         
 def Extract_Person_frame(root_video_path, root_output_path, raw_csv_path, model_path, data_yaml, device, debug):
     model = Detect_Person(model_path, data_yaml, device)
@@ -142,13 +149,14 @@ def Extract_Person_frame(root_video_path, root_output_path, raw_csv_path, model_
         if (idx == 0):
             continue # ['label', 'youtube_id', 'time_start', 'time_end', 'split', 'is_cc'] 
         label, youtube_id, time_start, time_end, split, is_cc = row
-        video_name = youtube_id + "_" + time_start.zfill(6) + "_" + time_end.zfill(6) + ".mp4"
+        label = label.replace(" ", "_")
+        video_name = find_video_name(root_video_path, label, youtube_id)
         print("Process ", idx, " ", video_name)
         
         video_path = os.path.join(root_video_path, label, video_name)
         save_path = os.path.join(root_output_path, label, video_name.split(".")[0])
         if not os.path.exists(save_path):
-                os.makedirs(save_path)
+            os.makedirs(save_path)
                 
         cap = cv2.VideoCapture(video_path)
         frame_idx = 0
@@ -169,8 +177,17 @@ if __name__ == "__main__":
     # nohup python Extract_person_from_video_kinect.py \
     # --device 0 \
     # --root_video_path /data/liujinfu/dataset/kinetics_400/raw-part/compress/train_256 \
+    # --root_output_path /data/liujinfu/dataset/kinetics_400/Process_Code_ljf/output/train_person \
     # --raw_csv_path /data/liujinfu/dataset/kinetics_400/label/train_256.csv \
     # > /data/liujinfu/process_kinectis_train_person.txt 2>&1 &
+        
+    # nohup python Extract_person_from_video_kinect.py \
+    # --device 0 \
+    # --root_video_path /data/liujinfu/dataset/kinetics_400/raw-part/compress/val_256 \
+    # --root_output_path /data/liujinfu/dataset/kinetics_400/Process_Code_ljf/output/val_person \
+    # --raw_csv_path /data/liujinfu/dataset/kinetics_400/label/val_256.csv \
+    # > /data/liujinfu/process_kinectis_val_person.txt 2>&1 &
+    
     parser = get_parser()
     args = parser.parse_args()
     root_video_path = args.root_video_path
@@ -179,6 +196,6 @@ if __name__ == "__main__":
     model_path = args.model_path
     data_yaml = args.data_yaml
     device = args.device
-    debug = args.debug
+    debug = True if args.debug == "True" else False
     Extract_Person_frame(root_video_path, root_output_path, raw_csv_path, model_path, data_yaml, device, debug)
     print("All done!")

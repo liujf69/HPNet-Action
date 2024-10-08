@@ -42,15 +42,12 @@ def parse_args():
     parser.add_argument('--raw_csv_path', 
                     type = str,
                     default = '/data/liujinfu/dataset/kinetics_400/label/train_256.csv')
-    parser.add_argument('--process_val', 
-                    type = bool,
-                    default = False)
     parser.add_argument('--device',
                         type = int,
                         default = 0)
     parser.add_argument('--debug', 
-                        type = bool,
-                        default = False)
+                        type = str,
+                        default = "False")
     args = parser.parse_args()
     return args
 
@@ -307,7 +304,7 @@ def find_video_name(root_video_path, label, youtube_id):
     video_path = os.path.join(root_video_path, label)
     video_names = os.listdir(video_path)
     for idx, video_name in enumerate(video_names):
-        if(video_name.split(".")[0] == youtube_id):
+        if(video_name[:11] == youtube_id):
             return video_name
 
 def main(args):
@@ -315,18 +312,14 @@ def main(args):
     root_output_path = args.save_path
     root_video_path = args.root_video_path
     raw_csv_path = args.raw_csv_path
-    process_val = args.process_val
     csv_reader = csv.reader(open(raw_csv_path))
-    debug = args.debug
+    debug = True if args.debug == "True" else False
     for idx, row in enumerate(csv_reader): 
         if (idx == 0):
             continue # ['label', 'youtube_id', 'time_start', 'time_end', 'split', 'is_cc'] 
         label, youtube_id, time_start, time_end, split, is_cc = row
-        
-        if process_val:
-            video_name = find_video_name(root_video_path, label, youtube_id)
-        else: 
-            video_name = youtube_id + "_" + time_start.zfill(6) + "_" + time_end.zfill(6) + ".mp4"
+        label = label.replace(" ", "_")
+        video_name = find_video_name(root_video_path, label, youtube_id)
         print("Process ", idx, " ", video_name)
         
         video_path = os.path.join(root_video_path, label, video_name)
