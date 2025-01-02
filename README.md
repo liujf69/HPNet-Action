@@ -1,7 +1,12 @@
 # HPNet-Action
 Implementation of the paper “Heatmap Pooling for Action Recognition from Videos”.
 
-# Data Processing
+# Download Dataset
+1. **NTU-RGB+D 60** dataset from [https://rose1.ntu.edu.sg/dataset/actionRecognition/](https://rose1.ntu.edu.sg/dataset/actionRecognition/)
+2. **NTU-RGB+D 120** dataset from [https://rose1.ntu.edu.sg/dataset/actionRecognition/](https://rose1.ntu.edu.sg/dataset/actionRecognition/)
+3. **Toyota-Smarthome** dataset from [https://project.inria.fr/toyotasmarthome/](https://project.inria.fr/toyotasmarthome/)
+
+# Process Dataset
 ```
 cd Process_data
 ```
