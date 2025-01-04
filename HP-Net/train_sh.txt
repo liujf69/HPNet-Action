@@ -1,0 +1,11 @@
+CUDA_VISIBLE_DEVICES=1,2,3,4 python -m torch.distributed.launch --nproc_per_node=4 hp_main.py --config configs/NTU/NTU120_XSub.yaml --distributed True --accumulation-steps 4 --output /data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU120/XSub_1214 --resume /data/liujinfu/TPAMI-24/TPAMI-24/HPNet/CKPT/k600_16_8.pth > /data/liujinfu/TPAMI-24/TPAMI-24/HPNet/outlog/NTU120_XSub_1214.log 2>&1
+
+CUDA_VISIBLE_DEVICES=1,2,3,4 python -m torch.distributed.launch --nproc_per_node=4 hp_main.py --config configs/NTU/NTU120_XSet.yaml --distributed True --accumulation-steps 4 --output /data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU120/XSet_1220 --resume /data/liujinfu/TPAMI-24/TPAMI-24/HPNet/CKPT/k600_16_8.pth > /data/liujinfu/TPAMI-24/TPAMI-24/HPNet/outlog/NTU120_XSet_1220.log 2>&1
+
+CUDA_VISIBLE_DEVICES=1,2,3,4 python -m torch.distributed.launch --nproc_per_node=4 hp_main.py --config configs/NTU/NTU120_XSet.yaml --distributed True --accumulation-steps 4 --output /data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU120/XSet_1220 --resume /data/liujinfu/TPAMI-24/TPAMI-24/HPNet/CKPT/k600_16_8.pth > /data/liujinfu/TPAMI-24/TPAMI-24/HPNet/outlog/NTU120_XSet_1220.log 2>&1
+
+CUDA_VISIBLE_DEVICES=1,2,3,4 python -m torch.distributed.launch --nproc_per_node=4 hp_main.py --config configs/NTU/NTU60_XSub.yaml --distributed True --accumulation-steps 4 --output /data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU60/XSub_1222 --resume /data/liujinfu/TPAMI-24/TPAMI-24/HPNet/CKPT/k600_16_8.pth > /data/liujinfu/TPAMI-24/TPAMI-24/HPNet/outlog/NTU60_XSub_1222.log 2>&1
+
+CUDA_VISIBLE_DEVICES=1,2,3,4 python -m torch.distributed.launch --nproc_per_node=4 hp_main.py --config configs/NTU/NTU60_XView.yaml --distributed True --accumulation-steps 4 --output /data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU60/XView_1223 --resume /data/liujinfu/TPAMI-24/TPAMI-24/HPNet/CKPT/k600_16_8.pth > /data/liujinfu/TPAMI-24/TPAMI-24/HPNet/outlog/NTU60_XView_1223.log 2>&1
+
+CUDA_VISIBLE_DEVICES=1,2,3,4 python -m torch.distributed.launch --nproc_per_node=4 hp_main.py --config configs/Smarthome/CS.yaml --distributed True --accumulation-steps 4 --output /data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/Smarthome/CS_0104 --resume /data/liujinfu/TPAMI-24/TPAMI-24/HPNet/CKPT/k600_16_8.pth > /data/liujinfu/TPAMI-24/TPAMI-24/HPNet/outlog/Smarthome_CS_0104.log 2>&1

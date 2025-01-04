@@ -1,0 +1,1 @@
+Download and put **k600_16_8.pth** here.

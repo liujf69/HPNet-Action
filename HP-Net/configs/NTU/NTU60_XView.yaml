@@ -1,0 +1,22 @@
+DATA:
+    Data_path: /data/liujinfu/dataset/NTU120_person_224
+    TRAIN_FILE: /data/liujinfu/TPAMI-24/TPAMI-24/GCN/dataset/NTU60_XView_train.txt
+    VAL_FILE: /data/liujinfu/TPAMI-24/TPAMI-24/GCN/dataset/NTU60_XView_val.txt
+    NUM_FRAMES: 8
+    NUM_CLASSES: 60
+    LABEL_LIST: /data/liujinfu/TPAMI-24/TPAMI-24/X-CLIP/ntu60_label_name.txt
+    BENCHMARK: NTU60-XView
+    ske_feature_data_path: /data/liujinfu/TPAMI-24/joint
+    ske_train_sample_txt_path: /data/liujinfu/TPAMI-24/TPAMI-24/GCN/dataset/NTU60_XView_train.txt
+    ske_val_sample_txt_path: /data/liujinfu/TPAMI-24/TPAMI-24/GCN/dataset/NTU60_XView_val.txt
+    bone: True
+    vel: True
+MODEL:
+    ARCH: ViT-B/16
+TRAIN:
+    BATCH_SIZE: 4 # 16 4
+    ACCUMULATION_STEPS: 4
+    NUM_WORKERS: 4
+    EPOCHS: 30
+TEST:
+    BATCH_SIZE: 4
