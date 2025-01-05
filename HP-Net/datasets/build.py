@@ -166,7 +166,7 @@ class NTUDataset(Dataset, metaclass=ABCMeta):
 
     def load_ske_data(self, index):
         sample_name = self.sample_txt[index]
-        if self.BenchMark == "Smarthome-CS":
+        if self.BenchMark == "Smarthome-CS" or self.BenchMark == "Smarthome-CV":
             feature_path = self.feature_data_path + '/' + sample_name.split('.mp4')[0] + '.npy'
         else: # NTU
             feature_path = self.feature_data_path + '/' + sample_name.split('.avi')[0] + '.npy'
