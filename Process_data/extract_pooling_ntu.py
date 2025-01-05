@@ -376,14 +376,14 @@ def main(args):
     print("All done!")
     
 if __name__ == "__main__":
-    # nohup python extract_pooling.py --device 0 --sample_txt ./sample_txt/S01_04.txt > /data-home/liujinfu/new_Yolo_Simcc/outlog/S01_04.log 2>&1 &
-    # nohup python extract_pooling.py --device 0 --sample_txt ./sample_txt/S05_08.txt > /data-home/liujinfu/new_Yolo_Simcc/outlog/S05_08.log 2>&1 &
-    # nohup python extract_pooling.py --device 0 --sample_txt ./sample_txt/S09_12.txt > /data-home/liujinfu/new_Yolo_Simcc/outlog/S09_12.log 2>&1 &
-    # nohup python extract_pooling.py --device 0 --sample_txt ./sample_txt/S13_16.txt > /data-home/liujinfu/new_Yolo_Simcc/outlog/S13_16.log 2>&1 &
-    # nohup python extract_pooling.py --device 0 --sample_txt ./sample_txt/S17_20.txt > /data-home/liujinfu/new_Yolo_Simcc/outlog/S17_20.log 2>&1 &
-    # nohup python extract_pooling.py --device 0 --sample_txt ./sample_txt/S21_24.txt > /data-home/liujinfu/new_Yolo_Simcc/outlog/S21_24.log 2>&1 &
-    # nohup python extract_pooling.py --device 0 --sample_txt ./sample_txt/S25_28.txt > /data-home/liujinfu/new_Yolo_Simcc/outlog/S25_28.log 2>&1 &
-    # nohup python extract_pooling.py --device 0 --sample_txt ./sample_txt/S29_32.txt > /data-home/liujinfu/new_Yolo_Simcc/outlog/S29_32.log 2>&1 &
+    # nohup python extract_pooling_ntu.py --device 0 --sample_txt ./sample_txt/S01_04.txt > /data-home/liujinfu/new_Yolo_Simcc/outlog/S01_04.log 2>&1 &
+    # nohup python extract_pooling_ntu.py --device 0 --sample_txt ./sample_txt/S05_08.txt > /data-home/liujinfu/new_Yolo_Simcc/outlog/S05_08.log 2>&1 &
+    # nohup python extract_pooling_ntu.py --device 0 --sample_txt ./sample_txt/S09_12.txt > /data-home/liujinfu/new_Yolo_Simcc/outlog/S09_12.log 2>&1 &
+    # nohup python extract_pooling_ntu.py --device 0 --sample_txt ./sample_txt/S13_16.txt > /data-home/liujinfu/new_Yolo_Simcc/outlog/S13_16.log 2>&1 &
+    # nohup python extract_pooling_ntu.py --device 0 --sample_txt ./sample_txt/S17_20.txt > /data-home/liujinfu/new_Yolo_Simcc/outlog/S17_20.log 2>&1 &
+    # nohup python extract_pooling_ntu.py --device 0 --sample_txt ./sample_txt/S21_24.txt > /data-home/liujinfu/new_Yolo_Simcc/outlog/S21_24.log 2>&1 &
+    # nohup python extract_pooling_ntu.py --device 0 --sample_txt ./sample_txt/S25_28.txt > /data-home/liujinfu/new_Yolo_Simcc/outlog/S25_28.log 2>&1 &
+    # nohup python extract_pooling_ntu.py --device 0 --sample_txt ./sample_txt/S29_32.txt > /data-home/liujinfu/new_Yolo_Simcc/outlog/S29_32.log 2>&1 &
 
     # Test sample 
     # python extract_pooling.py --sample_txt ./sample_txt/test.txt --videos_path ./data/videos --save_path ./output/pooling_feature --device 0

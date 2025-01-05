@@ -196,14 +196,14 @@ def Extract_Person_frame(samples, video_path, output_path, model_path, data_yaml
                 frame_idx += 1
 
 if __name__ == "__main__":
-    # nohup python Extract_person_from_video.py --sample_name_path /data-home/liujinfu/new_Yolo_Simcc/sample_txt/S01_04.txt --device 0 > /data-home/liujinfu/Extract_NTU_Person/outlog/S01_04.txt 2>&1 &
-    # nohup python Extract_person_from_video.py --sample_name_path /data-home/liujinfu/new_Yolo_Simcc/sample_txt/S05_08.txt --device 0 > /data-home/liujinfu/Extract_NTU_Person/outlog/S05_08.txt 2>&1 &
-    # nohup python Extract_person_from_video.py --sample_name_path /data-home/liujinfu/new_Yolo_Simcc/sample_txt/S09_12.txt --device 0 > /data-home/liujinfu/Extract_NTU_Person/outlog/S09_12.txt 2>&1 &
-    # nohup python Extract_person_from_video.py --sample_name_path /data-home/liujinfu/new_Yolo_Simcc/sample_txt/S13_16.txt --device 0 > /data-home/liujinfu/Extract_NTU_Person/outlog/S13_16.txt 2>&1 &
-    # nohup python Extract_person_from_video.py --sample_name_path /data-home/liujinfu/new_Yolo_Simcc/sample_txt/S17_20.txt --device 0 > /data-home/liujinfu/Extract_NTU_Person/outlog/S17_20.txt 2>&1 &
-    # nohup python Extract_person_from_video.py --sample_name_path /data-home/liujinfu/new_Yolo_Simcc/sample_txt/S21_24.txt --device 0 > /data-home/liujinfu/Extract_NTU_Person/outlog/S21_24.txt 2>&1 &
-    # nohup python Extract_person_from_video.py --sample_name_path /data-home/liujinfu/new_Yolo_Simcc/sample_txt/S25_28.txt --device 0 > /data-home/liujinfu/Extract_NTU_Person/outlog/S25_28.txt 2>&1 &
-    # nohup python Extract_person_from_video.py --sample_name_path /data-home/liujinfu/new_Yolo_Simcc/sample_txt/S29_32.txt --device 0 > /data-home/liujinfu/Extract_NTU_Person/outlog/S29_32.txt 2>&1 &
+    # nohup python Extract_person_from_video_ntu.py --sample_name_path /data-home/liujinfu/new_Yolo_Simcc/sample_txt/S01_04.txt --device 0 > /data-home/liujinfu/Extract_NTU_Person/outlog/S01_04.txt 2>&1 &
+    # nohup python Extract_person_from_video_ntu.py --sample_name_path /data-home/liujinfu/new_Yolo_Simcc/sample_txt/S05_08.txt --device 0 > /data-home/liujinfu/Extract_NTU_Person/outlog/S05_08.txt 2>&1 &
+    # nohup python Extract_person_from_video_ntu.py --sample_name_path /data-home/liujinfu/new_Yolo_Simcc/sample_txt/S09_12.txt --device 0 > /data-home/liujinfu/Extract_NTU_Person/outlog/S09_12.txt 2>&1 &
+    # nohup python Extract_person_from_video_ntu.py --sample_name_path /data-home/liujinfu/new_Yolo_Simcc/sample_txt/S13_16.txt --device 0 > /data-home/liujinfu/Extract_NTU_Person/outlog/S13_16.txt 2>&1 &
+    # nohup python Extract_person_from_video_ntu.py --sample_name_path /data-home/liujinfu/new_Yolo_Simcc/sample_txt/S17_20.txt --device 0 > /data-home/liujinfu/Extract_NTU_Person/outlog/S17_20.txt 2>&1 &
+    # nohup python Extract_person_from_video_ntu.py --sample_name_path /data-home/liujinfu/new_Yolo_Simcc/sample_txt/S21_24.txt --device 0 > /data-home/liujinfu/Extract_NTU_Person/outlog/S21_24.txt 2>&1 &
+    # nohup python Extract_person_from_video_ntu.py --sample_name_path /data-home/liujinfu/new_Yolo_Simcc/sample_txt/S25_28.txt --device 0 > /data-home/liujinfu/Extract_NTU_Person/outlog/S25_28.txt 2>&1 &
+    # nohup python Extract_person_from_video_ntu.py --sample_name_path /data-home/liujinfu/new_Yolo_Simcc/sample_txt/S29_32.txt --device 0 > /data-home/liujinfu/Extract_NTU_Person/outlog/S29_32.txt 2>&1 &
     
     # Test sample
     # python Extract_person_from_video.py --sample_name_path ./sample_txt/test.txt --video_path ./data/videos --output_path ./output/Person_Frame_224 --device 0
