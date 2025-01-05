@@ -154,19 +154,6 @@ def match_score(gpu1_Name, RGB_Score, val_txt_file):
 
 # Smarthome
 def mean_class_accuracies(preds, labels, num_classes):
-    """
-    Computes the mean per-class accuracy over all classes
-
-    Args:
-        preds (array): array of predictions. Dimension is N.
-        labels (array): array of labels. Dimension is N.
-        num_classes (int): number of classes that can be predicted
-
-    Returns:
-        conf_matrix (torch.tensor): confidence matrix of predictions (rows are ground-truth class, columns are predicted class)
-        class_accuracies (list): list of individual class accuracies
-        mean_class_accuracy (float): the mean class accuracy
-    """
     conf_matrix = torch.zeros((num_classes, num_classes))
     pred_classes = torch.argmax(preds, dim=1)
 

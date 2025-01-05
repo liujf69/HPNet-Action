@@ -1,0 +1,167 @@
+import torch
+import pickle
+import argparse
+import numpy as np
+import pandas as pd
+
+# Smarthome
+Smarthome_action_label_dict = {'Cook.Cleandishes': 0, 'Cook.Cleanup': 1, 'Cook.Cut': 2, 'Cook.Stir': 3, 'Cook.Usestove': 4, 'Cutbread': 5, 'Drink.Frombottle': 6,
+                               'Drink.Fromcan': 7, 'Drink.Fromcup': 8, 'Drink.Fromglass': 9, 'Eat.Attable': 10, 'Eat.Snack': 11, 'Enter': 12, 'Getup': 13, 
+                               'Laydown': 14, 'Leave': 15, 'Makecoffee.Pourgrains': 16, 'Makecoffee.Pourwater': 17, 'Maketea.Boilwater': 18, 'Maketea.Insertteabag': 19,
+                               'Pour.Frombottle': 20, 'Pour.Fromcan': 21, 'Pour.Fromkettle': 22, 'Readbook': 23, 'Sitdown': 24, 'Takepills': 25, 'Uselaptop': 26,
+                               'Usetablet': 27, 'Usetelephone': 28, 'Walk': 29, 'WatchTV': 30}
+
+Smarthome_action_label_dict_CV = {'Cutbread': 0, 'Drink.Frombottle': 1, 'Drink.Fromcan': 2, 'Drink.Fromcup': 3, 'Drink.Fromglass': 4, 'Eat.Attable': 5, 'Eat.Snack': 6,
+                               'Enter': 7, 'Getup': 8, 'Leave': 9, 'Pour.Frombottle': 10, 'Pour.Fromcan': 11, 'Readbook': 12, 'Sitdown': 13, 
+                               'Takepills': 14, 'Uselaptop': 15, 'Usetablet': 16, 'Usetelephone': 17, 'Walk': 18}
+
+def get_parser():
+    parser = argparse.ArgumentParser(description = 'multi-stream ensemble') 
+    parser.add_argument(
+        '--gpu1_Score', 
+        type = str,
+        default = './Smarthome_CS/0_best_score.npy') # Smarthome CS
+    parser.add_argument(
+        '--gpu2_Score', 
+        type = str,
+        default = './Smarthome_CS/1_best_score.npy') # Smarthome CS
+    parser.add_argument(
+        '--gpu3_Score', 
+        type = str,
+        default = './Smarthome_CS/2_best_score.npy') # Smarthome CS
+    parser.add_argument(
+        '--gpu4_Score', 
+        type = str,
+        default = './Smarthome_CS/3_best_score.npy') # Smarthome CS
+    parser.add_argument(
+        '--gpu1_Name', 
+        type = str,
+        default = './Smarthome_CS/0_best_name.txt') # Smarthome CS
+    parser.add_argument(
+        '--gpu2_Name', 
+        type = str,
+        default = './Smarthome_CS/1_best_name.txt') # Smarthome CS
+    parser.add_argument(
+        '--gpu3_Name', 
+        type = str,
+        default = './Smarthome_CS/2_best_name.txt') # Smarthome CS
+    parser.add_argument(
+        '--gpu4_Name', 
+        type = str,
+        default = './Smarthome_CS/3_best_name.txt') # Smarthome CS
+    
+    parser.add_argument(
+        '--val_sample', 
+        type = str,
+        default = './Smarthome_CS/test_CS.txt') # Smarthome CS
+    parser.add_argument(
+        '--benchmark', 
+        type = str,
+        default = 'Smarthome_CS')
+    return parser
+
+def Cal_Acc(final_score, true_label):
+    wrong_index = []
+    _, predict_label = torch.max(final_score, 1)
+    for index, p_label in enumerate(predict_label):
+        if p_label != true_label[index]:
+            wrong_index.append(index)
+            
+    wrong_num = np.array(wrong_index).shape[0]
+    print('wrong_num: ', wrong_num)
+
+    total_num = true_label.shape[0]
+    print('total_num: ', total_num)
+    Acc = (total_num - wrong_num) / total_num
+    return Acc
+
+def gen_label_ntu(val_txt_path):
+    true_label = []
+    val_txt = np.loadtxt(val_txt_path, dtype = str)
+    for idx, name in enumerate(val_txt):
+        label = int(name[-3:]) - 1
+        true_label.append(label)
+
+    true_label = torch.from_numpy(np.array(true_label))
+    return true_label
+
+def gen_label_sh(val_txt_file, benchmark):
+    true_label = []
+    val_txt = np.loadtxt(val_txt_file, dtype = str)
+    for idx, name in enumerate(val_txt):
+        action = name.split("_")[0]
+        if benchmark == 'Smarthome_CS':
+            label = int(Smarthome_action_label_dict[action])
+        else:
+            label = int(Smarthome_action_label_dict_CV[action])
+        true_label.append(label)
+    true_label = torch.from_numpy(np.array(true_label))
+    return true_label
+
+def match_score(gpu1_Name, RGB_Score, val_txt_file):
+    val_txt = np.loadtxt(val_txt_file, dtype = str)
+    Score = torch.zeros_like(RGB_Score)
+    for idx, name in enumerate(gpu1_Name):
+        match_idx = np.where(val_txt == name)[0].item()
+        Score[match_idx] = RGB_Score[idx]
+    
+    return Score
+
+# Smarthome
+def mean_class_accuracies(preds, labels, num_classes):
+    conf_matrix = torch.zeros((num_classes, num_classes))
+    pred_classes = torch.argmax(preds, dim=1)
+
+    for (gt_class, pred_class) in zip(labels, pred_classes):
+      conf_matrix[int(gt_class.item()), int(pred_class.item())] += 1
+
+    class_accuracies = conf_matrix.diag() / conf_matrix.sum(dim=1) # num_classes
+    mean_perclass_accuracy = class_accuracies.mean()
+
+    return conf_matrix, class_accuracies, mean_perclass_accuracy
+    
+if __name__ == "__main__":
+    parser = get_parser()
+    args = parser.parse_args()
+    gpu1_Score_file = args.gpu1_Score
+    gpu2_Score_file = args.gpu2_Score
+    gpu3_Score_file = args.gpu3_Score
+    gpu4_Score_file = args.gpu4_Score
+    gpu1_Name_file = args.gpu1_Name
+    gpu2_Name_file = args.gpu2_Name
+    gpu3_Name_file = args.gpu3_Name
+    gpu4_Name_file = args.gpu4_Name
+    val_txt_file = args.val_sample
+
+    gpu1_score = torch.from_numpy(np.load(gpu1_Score_file, allow_pickle = True))
+    gpu2_score = torch.from_numpy(np.load(gpu2_Score_file, allow_pickle = True))
+    gpu3_score = torch.from_numpy(np.load(gpu3_Score_file, allow_pickle = True))
+    gpu4_score = torch.from_numpy(np.load(gpu4_Score_file, allow_pickle = True))
+    gpu1_Name = np.loadtxt(gpu1_Name_file, dtype = str).tolist()
+    gpu2_Name = np.loadtxt(gpu2_Name_file, dtype = str).tolist()
+    gpu3_Name = np.loadtxt(gpu3_Name_file, dtype = str).tolist()
+    gpu4_Name = np.loadtxt(gpu4_Name_file, dtype = str).tolist()
+    
+    RGB_Score = torch.concat((gpu1_score, gpu2_score, gpu3_score, gpu4_score), dim = 0) # Sample_Num, Numclass
+    gpu1_Name.extend(gpu2_Name)
+    gpu1_Name.extend(gpu3_Name)
+    gpu1_Name.extend(gpu4_Name)
+    RGB_Score = match_score(gpu1_Name, RGB_Score, val_txt_file)
+    
+    if args.benchmark == 'Smarthome_CS':
+        Numclass = 31
+        Sample_Num = 5433
+        Score = RGB_Score
+        true_label = gen_label_sh(val_txt_file, args.benchmark)
+    elif args.benchmark == 'Smarthome_CV1':
+        Numclass = 19
+        Sample_Num = 1901
+        Score = RGB_Score
+        true_label = gen_label_sh(val_txt_file, args.benchmark)
+
+    Acc = Cal_Acc(Score, true_label)
+    conf_matrix, class_accuracies, mean_perclass_accuracy = mean_class_accuracies(Score, true_label, Numclass)
+
+    print('acc:', Acc)
+    print('mca:', mean_perclass_accuracy.item()) # CS 81.3, CV1 51.7, CV2 
+    print("All Done!")
