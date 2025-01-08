@@ -1,3 +1,4 @@
+# train
 CUDA_VISIBLE_DEVICES=1,2,3,4 python -m torch.distributed.launch --nproc_per_node=4 hp_main.py --config configs/NTU/NTU120_XSub.yaml --distributed True --accumulation-steps 4 --output /data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU120/XSub_1214 --resume /data/liujinfu/TPAMI-24/TPAMI-24/HPNet/CKPT/k600_16_8.pth > /data/liujinfu/TPAMI-24/TPAMI-24/HPNet/outlog/NTU120_XSub_1214.log 2>&1
 
 CUDA_VISIBLE_DEVICES=1,2,3,4 python -m torch.distributed.launch --nproc_per_node=4 hp_main.py --config configs/NTU/NTU120_XSet.yaml --distributed True --accumulation-steps 4 --output /data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU120/XSet_1220 --resume /data/liujinfu/TPAMI-24/TPAMI-24/HPNet/CKPT/k600_16_8.pth > /data/liujinfu/TPAMI-24/TPAMI-24/HPNet/outlog/NTU120_XSet_1220.log 2>&1
@@ -13,3 +14,8 @@ CUDA_VISIBLE_DEVICES=1,2,3,4 python -m torch.distributed.launch --nproc_per_node
 CUDA_VISIBLE_DEVICES=1,2,3,4 python -m torch.distributed.launch --nproc_per_node=4 hp_main.py --config configs/Smarthome/CV1.yaml --distributed True --accumulation-steps 4 --output /data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/Smarthome/CV1_0105 --resume /data/liujinfu/TPAMI-24/TPAMI-24/HPNet/CKPT/k600_16_8.pth > /data/liujinfu/TPAMI-24/TPAMI-24/HPNet/outlog/Smarthome_CV1_0105.log 2>&1
 
 CUDA_VISIBLE_DEVICES=1,2,3,4 python -m torch.distributed.launch --nproc_per_node=4 hp_main.py --config configs/Smarthome/CV2.yaml --distributed True --accumulation-steps 4 --output /data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/Smarthome/CV2_0105 --resume /data/liujinfu/TPAMI-24/TPAMI-24/HPNet/CKPT/k600_16_8.pth > /data/liujinfu/TPAMI-24/TPAMI-24/HPNet/outlog/Smarthome_CV2_0105.log 2>&1
+
+# emsemble
+python ensemble_1s.py --gpu1_Score ./Smarthome_CS/0_best_score.npy --gpu2_Score ./Smarthome_CS/1_best_score.npy --gpu3_Score ./Smarthome_CS/2_best_score.npy --gpu4_Score ./Smarthome_CS/3_best_score.npy --gpu1_Name ./Smarthome_CS/0_best_name.txt --gpu2_Name ./Smarthome_CS/1_best_name.txt --gpu3_Name ./Smarthome_CS/2_best_name.txt --gpu4_Name ./Smarthome_CS/3_best_name.txt --val_sample ./Smarthome_CS/test_CS.txt --benchmark Smarthome_CS
+
+python ensemble.py --gpu1_Score ./Smarthome_CV1/0_best_score.npy --gpu2_Score ./Smarthome_CV1/1_best_score.npy --gpu3_Score ./Smarthome_CV1/2_best_score.npy --gpu4_Score ./Smarthome_CV1/3_best_score.npy --gpu1_Name ./Smarthome_CV1/0_best_name.txt --gpu2_Name ./Smarthome_CV1/1_best_name.txt --gpu3_Name ./Smarthome_CV1/2_best_name.txt --gpu4_Name ./Smarthome_CV1/3_best_name.txt --J_Score ./Smarthome_CV1/J_epoch1_test_score.pkl --B_Score ./Smarthome_CV1/B_epoch1_test_score.pkl --JM_Score ./Smarthome_CV1/JM_epoch1_test_score.pkl --BM_Score ./Smarthome_CV1/BM_epoch1_test_score.pkl --val_sample ./Smarthome_CV1/test_CV1.txt --benchmark Smarthome_CV1

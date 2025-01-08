@@ -4,6 +4,7 @@ import argparse
 import numpy as np
 import pandas as pd
 
+# Smarthome
 Smarthome_action_label_dict = {'Cook.Cleandishes': 0, 'Cook.Cleanup': 1, 'Cook.Cut': 2, 'Cook.Stir': 3, 'Cook.Usestove': 4, 'Cutbread': 5, 'Drink.Frombottle': 6,
                                'Drink.Fromcan': 7, 'Drink.Fromcup': 8, 'Drink.Fromglass': 9, 'Eat.Attable': 10, 'Eat.Snack': 11, 'Enter': 12, 'Getup': 13, 
                                'Laydown': 14, 'Leave': 15, 'Makecoffee.Pourgrains': 16, 'Makecoffee.Pourwater': 17, 'Maketea.Boilwater': 18, 'Maketea.Insertteabag': 19,
@@ -19,114 +20,87 @@ def get_parser():
     parser.add_argument(
         '--gpu1_Score', 
         type = str,
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU120/XSub_1207/0_best_score.npy') # NTU120XSub
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU120/XSet_1220_best/0_best_score.npy') # NTU120XSet
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU60/XSub_1222/0_best_score.npy') # NTU60XSub
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU60/XView_1223/0_best_score.npy') # NTU60XView
-        default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/Smarthome/CV1_0105/0_best_score.npy') # Smarthome_CV1
+        default = './Smarthome_CS/0_best_score.npy') # Smarthome_CS
+        # default = './Smarthome_CV1/0_best_score.npy') # Smarthome_CV1
+        # default = './Smarthome_CV2/0_best_score.npy') # Smarthome_CV2
     parser.add_argument(
         '--gpu2_Score', 
         type = str,
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU120/XSub_1207/1_best_score.npy') # NTU120XSub
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU120/XSet_1220_best/1_best_score.npy') # NTU120XSet
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU60/XSub_1222/1_best_score.npy') # NTU60XSub
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU60/XView_1223/1_best_score.npy') # NTU60XView
-        default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/Smarthome/CV1_0105/1_best_score.npy') # Smarthome_CV1
+        default = './Smarthome_CS/1_best_score.npy') # Smarthome_CS
+        # default = './Smarthome_CV1/1_best_score.npy') # Smarthome_CV1
+        # default = './Smarthome_CV2/1_best_score.npy') # Smarthome_CV2
     parser.add_argument(
         '--gpu3_Score', 
         type = str,
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU120/XSub_1207/2_best_score.npy') # NTU120XSub
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU120/XSet_1220_best/2_best_score.npy') # NTU120XSet
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU60/XSub_1222/2_best_score.npy') # NTU60XSub
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU60/XView_1223/2_best_score.npy') # NTU60XView
-        default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/Smarthome/CV1_0105/2_best_score.npy') # Smarthome_CV1
+        default = './Smarthome_CS/2_best_score.npy') # Smarthome_CS
+        # default = './Smarthome_CV1/2_best_score.npy') # Smarthome_CV1
+        # default = './Smarthome_CV2/2_best_score.npy') # Smarthome_CV2
     parser.add_argument(
         '--gpu4_Score', 
         type = str,
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU120/XSub_1207/3_best_score.npy') # NTU120XSub
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU120/XSet_1220_best/3_best_score.npy') # NTU120XSet
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU60/XSub_1222/3_best_score.npy') # NTU60XSub
-        default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU60/XView_1223/3_best_score.npy') # NTU60XView
+        default = './Smarthome_CS/3_best_score.npy') # Smarthome_CS
+        # default = './Smarthome_CV1/3_best_score.npy') # Smarthome_CV1
+        # default = './Smarthome_CV2/3_best_score.npy') # Smarthome_CV2
     parser.add_argument(
         '--gpu1_Name', 
         type = str,
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU120/XSub_1207/0_best_name.txt') # NTU120XSub
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU120/XSet_1220_best/0_best_name.txt') # NTU120XSet
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU60/XSub_1222/0_best_name.txt') # NTU60XSub
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU60/XView_1223/0_best_name.txt') # NTU60XView
-        default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/Smarthome/CV1_0105/0_best_name.txt') # Smarthome CV1
+        default = './Smarthome_CS/0_best_name.txt') # Smarthome CS
+        # default = './Smarthome_CV1/0_best_name.txt') # Smarthome CV1
+        # default = './Smarthome_CV2/0_best_name.txt') # Smarthome_CV2
     parser.add_argument(
         '--gpu2_Name', 
         type = str,
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU120/XSub_1207/1_best_name.txt') # NTU120XSub
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU120/XSet_1220_best/1_best_name.txt') # NTU120XSet
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU60/XSub_1222/1_best_name.txt') # NTU60XSub
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU60/XView_1223/1_best_name.txt') # NTU60XView
-        default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/Smarthome/CV1_0105/1_best_name.txt') # Smarthome CV11
+        default = './Smarthome_CS/1_best_name.txt') # Smarthome CS
+        # default = './Smarthome_CV1/1_best_name.txt') # Smarthome CV1
+        # default = './Smarthome_CV2/1_best_name.txt') # Smarthome CV2
     parser.add_argument(
         '--gpu3_Name', 
         type = str,
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU120/XSub_1207/2_best_name.txt') # NTU120XSub
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU120/XSet_1220_best/2_best_name.txt') # NTU120XSet
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU60/XSub_1222/2_best_name.txt') # NTU60XSub
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU60/XView_1223/2_best_name.txt') # NTU60XView
-        default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/Smarthome/CV1_0105/2_best_name.txt') # Smarthome CV1
+        default = './Smarthome_CS/2_best_name.txt') # Smarthome CS
+        # default = './Smarthome_CV1/2_best_name.txt') # Smarthome CV1
+        # default = './Smarthome_CV2/2_best_name.txt') # Smarthome CV2
     parser.add_argument(
         '--gpu4_Name', 
         type = str,
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU120/XSub_1207/3_best_name.txt') # NTU120XSub
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU120/XSet_1220_best/3_best_name.txt') # NTU120XSet
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU60/XSub_1222/3_best_name.txt') # NTU60XSub
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/NTU60/XView_1223/3_best_name.txt') # NTU60XView
-        default = '/data/liujinfu/TPAMI-24/TPAMI-24/HPNet/output/Smarthome/CV1_0105/3_best_name.txt') # Smarthome CV1
+        default = './Smarthome_CS/3_best_name.txt') # Smarthome CS
+        # default = './Smarthome_CV1/3_best_name.txt') # Smarthome CV1
+        # default = './Smarthome_CV2/3_best_name.txt') # Smarthome CV2
     parser.add_argument(
         '--J_Score', 
         type = str,
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/GCN/work_dir/ntu120/XSub/joint_pooling_0424/epoch1_test_score.pkl') # NTU120XSub H
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/GCN/work_dir/ntu120/XSet/joint_pooling_0505/epoch1_test_score.pkl') # NTU120XSet H
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/GCN/work_dir/ntu60/NTU60_XSub/joint_pooling_0508/epoch1_test_score.pkl') # NTU60XSub H
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/GCN/work_dir/ntu60/NTU60_XView/joint_pooling_0509/epoch1_test_score.pkl') # NTU60XView H
-        default = '/data/liujinfu/TPAMI-24/TPAMI-24/GCN/work_dir/Smarthome/joint_pooling_0105/epoch1_test_score.pkl') # Smarthome CV1 H
+        default = './Smarthome_CS/J_epoch1_test_score.pkl') # Smarthome CS H
+        # default = './Smarthome_CV1/J_epoch1_test_score.pkl') # Smarthome CV1 H
+        # default = './Smarthome_CV2/J_epoch1_test_score.pkl') # Smarthome CV2 H
     parser.add_argument(
         '--B_Score', 
         type = str,
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/GCN/work_dir/ntu120/XSub/bone_pooling_0424/epoch1_test_score.pkl') # NTU120XSub H
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/GCN/work_dir/ntu120/XSet/bone_pooling_0505/epoch1_test_score.pkl') # NTU120XSet H
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/GCN/work_dir/ntu60/NTU60_XSub/bone_pooling_0508/epoch1_test_score.pkl') # NTU60XSub H
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/GCN/work_dir/ntu60/NTU60_XView/bone_pooling_0509/epoch1_test_score.pkl') # NTU60XView H
-        default = '/data/liujinfu/TPAMI-24/TPAMI-24/GCN/work_dir/Smarthome/bone_pooling_0105/epoch1_test_score.pkl') # Smarthome CV1 H
+        default = './Smarthome_CS/B_epoch1_test_score.pkl') # Smarthome CS H
+        # default = './Smarthome_CV1/B_epoch1_test_score.pkl') # Smarthome CV1 H
+        # default = './Smarthome_CV2/B_epoch1_test_score.pkl') # Smarthome CV2 H
     parser.add_argument(
         '--JM_Score', 
         type = str,
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/GCN/work_dir/ntu120/XSub/jointmotion_pooling_0425/epoch1_test_score.pkl') # NTU120XSub H
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/GCN/work_dir/ntu120/XSet/jointmotion_pooling_0506/epoch1_test_score.pkl') # NTU120XSet H
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/GCN/work_dir/ntu60/NTU60_XSub/jointmotion_pooling_0508/epoch1_test_score.pkl') # NTU60XSub H
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/GCN/work_dir/ntu60/NTU60_XView/jointmotion_pooling_0509/epoch1_test_score.pkl') # NTU60XView H
-        default = '/data/liujinfu/TPAMI-24/TPAMI-24/GCN/work_dir/Smarthome/jointmotion_pooling_0105/epoch1_test_score.pkl') # Smarthome CV1 H
+        default = './Smarthome_CS/JM_epoch1_test_score.pkl') # Smarthome CS H
+        # default = './Smarthome_CV1/JM_epoch1_test_score.pkl') # Smarthome CV1 H
+        # default = './Smarthome_CV2/JM_epoch1_test_score.pkl') # Smarthome CV2 H
     parser.add_argument(
         '--BM_Score', 
         type = str,
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/GCN/work_dir/ntu120/XSub/bonemotion_pooling_0425/epoch1_test_score.pkl') # NTU120XSub H
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/GCN/work_dir/ntu120/XSet/bonemotion_pooling_0506/epoch1_test_score.pkl') # NTU120XSet H
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/GCN/work_dir/ntu60/NTU60_XSub/bonemotion_pooling_0508/epoch1_test_score.pkl') # NTU60XSub H
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/GCN/work_dir/ntu60/NTU60_XView/bonemotion_pooling_0509/epoch1_test_score.pkl') # NTU60XView H
-        default = '/data/liujinfu/TPAMI-24/TPAMI-24/GCN/work_dir/Smarthome/bone_pooling_0105/epoch1_test_score.pkl') # Smarthome CV1 H
+        default = './Smarthome_CS/BM_epoch1_test_score.pkl') # Smarthome CS H
+        # default = './Smarthome_CV1/BM_epoch1_test_score.pkl') # Smarthome CV1 H
+        # default = './Smarthome_CV2/BM_epoch1_test_score.pkl') # Smarthome CV2 H
     parser.add_argument(
         '--val_sample', 
         type = str,
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/GCN/dataset/NTU120_XSub_val.txt') # NTU120XSub
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/GCN/dataset/NTU120_XSet_val.txt') # NTU120XSet
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/GCN/dataset/NTU60_XSub_val.txt') # NTU60XSub
-        # default = '/data/liujinfu/TPAMI-24/TPAMI-24/GCN/dataset/NTU60_XView_val.txt') # NTU60XView
-        default = '/data/liujinfu/dataset/Toyota-Smarthome/test_CV1.txt') # Smarthome CV1
+        default = './Smarthome_CS/test_CS.txt') # Smarthome CS
+        # default = './Smarthome_CV1/test_CV1.txt') # Smarthome CV1
+        # default = './Smarthome_CV2/test_CV2.txt') # Smarthome CV2
     parser.add_argument(
         '--benchmark', 
         type = str,
-        # default = 'NTU120XSub')
-        # default = 'NTU120XSet')
-        # default = 'NTU60XSub')
-        # default = 'NTU60XView')
-        default = 'Smarthome_CV1')
+        default = 'Smarthome_CS')
+        # default = 'Smarthome_CV1')
+        # default = 'Smarthome_CV2')
     return parser
 
 def Cal_Score(File, RGB_Score, Rate, ntu60XS_num, Numclass):
@@ -229,7 +203,7 @@ if __name__ == "__main__":
     val_txt_file = args.val_sample
     
     File = [j_file, b_file, jm_file, bm_file] 
-    Rate = [0.1, 0.1, 0.1, 0.1, 3.0]
+    Rate = [0.1, 0.1, 0.1, 0.1, 4.0]
     
     RGB_Score = torch.concat((gpu1_score, gpu2_score, gpu3_score, gpu4_score), dim = 0) # Sample_Num, Numclass
     gpu1_Name.extend(gpu2_Name)
@@ -261,12 +235,24 @@ if __name__ == "__main__":
         Score = Cal_Score(File, RGB_Score, Rate, Sample_Num, Numclass)
         true_label = gen_label_ntu(val_txt_file)
     
+    elif args.benchmark == 'Smarthome_CS': # [0.1, 0.1, 0.1, 0.1, 4.0]
+        Numclass = 31
+        Sample_Num = 5433
+        Score = Cal_Score(File, RGB_Score, Rate, Sample_Num, Numclass)
+        true_label = gen_label_sh(val_txt_file, args.benchmark) 
+    
     elif args.benchmark == 'Smarthome_CV1': # [0.1, 0.1, 0.1, 0.1, 4.0]
         Numclass = 19
         Sample_Num = 1901
         Score = Cal_Score(File, RGB_Score, Rate, Sample_Num, Numclass)
         true_label = gen_label_sh(val_txt_file, args.benchmark) 
-
+    
+    elif args.benchmark == 'Smarthome_CV2': # [0.1, 0.1, 0.1, 0.1, 8.0]
+        Numclass = 19
+        Sample_Num = 1901
+        Score = Cal_Score(File, RGB_Score, Rate, Sample_Num, Numclass)
+        true_label = gen_label_sh(val_txt_file, args.benchmark) 
+        
     Acc = Cal_Acc(Score, true_label)
     conf_matrix, class_accuracies, mean_perclass_accuracy = mean_class_accuracies(Score, true_label, Numclass)
 

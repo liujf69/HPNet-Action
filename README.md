@@ -34,3 +34,79 @@ python Etract_person_from_video_xxx.py --sample_txt <your_sample_txt> --videos_p
 # Example
 python Etract_person_from_video_ntu.py --sample_txt ./sample_txt/test.txt --videos_path ./data/videos --save_path ./output/pooling_feature --device 0
 ```
+
+# Train
+
+# Test
+
+## Ensemble
+1. Ensemble one-stream (1s)
+```bash
+cd ensemble
+python ensemble_1s \
+--gpu1_Score <gpu1_Score_path> \
+--gpu2_Score <gpu2_Score_path> \
+--gpu3_Score <gpu3_Score_path> \
+--gpu4_Score <gpu4_Score_path> \
+--gpu1_Name <gpu1_Name_path> \
+--gpu2_Name <gpu2_Name_path> \
+--gpu3_Name <gpu3_Name_path> \
+--gpu4_Name <gpu4_Name_path> \
+--val_sample <val_sample_path> \
+--benchmark <NTU60XSub, NTU60XView, NTU120XSub, NTU120XSet, Smarthome_CS, Smarthome_CV1, Smarthome_CV2>
+
+# demo example:
+python ensemble_1s.py \
+--gpu1_Score ./Smarthome_CS/0_best_score.npy \
+--gpu2_Score ./Smarthome_CS/1_best_score.npy \
+--gpu3_Score ./Smarthome_CS/2_best_score.npy \
+--gpu4_Score ./Smarthome_CS/3_best_score.npy \
+--gpu1_Name ./Smarthome_CS/0_best_name.txt \
+--gpu2_Name ./Smarthome_CS/1_best_name.txt \
+--gpu3_Name ./Smarthome_CS/2_best_name.txt \
+--gpu4_Name ./Smarthome_CS/3_best_name.txt \
+--val_sample ./Smarthome_CS/test_CS.txt \
+--benchmark Smarthome_CS
+```
+2. Ensemble multi-stream
+```bash
+cd ensemble
+# set rate (x.x, x.x, x.x, x.x, x.x) # J B JM BM HP-Net
+python ensemble \
+--gpu1_Score <gpu1_Score_path> \
+--gpu2_Score <gpu2_Score_path> \
+--gpu3_Score <gpu3_Score_path> \
+--gpu4_Score <gpu4_Score_path> \
+--gpu1_Name <gpu1_Name_path> \
+--gpu2_Name <gpu2_Name_path> \
+--gpu3_Name <gpu3_Name_path> \
+--gpu4_Name <gpu4_Name_path> \
+--J_Score <J_Score_path> \
+--B_Score <B_Score_path> \
+--JM_Score <JM_Score_path> \
+--BM_Score <BM_Score_path> \
+--val_sample <val_sample_path> \
+--benchmark <NTU60XSub, NTU60XView, NTU120XSub, NTU120XSet, Smarthome_CS, Smarthome_CV1, Smarthome_CV2>
+
+# demo example:
+# set rate (0.1, 0.1, 0.1, 0.1, 4.0) # HP-Net J B JM BM
+python ensemble \
+--gpu1_Score ./Smarthome_CV1/0_best_score.npy \
+--gpu2_Score ./Smarthome_CV1/1_best_score.npy \
+--gpu3_Score ./Smarthome_CV1/2_best_score.npy \
+--gpu4_Score ./Smarthome_CV1/3_best_score.npy \
+--gpu1_Name ./Smarthome_CV1/0_best_name.txt \
+--gpu2_Name ./Smarthome_CV1/1_best_name.txt \
+--gpu3_Name ./Smarthome_CV1/2_best_name.txt \
+--gpu4_Name ./Smarthome_CV1/3_best_name.txt \
+--J_Score ./Smarthome_CV1/J_epoch1_test_score.pkl \
+--B_Score ./Smarthome_CV1/B_epoch1_test_score.pkl \
+--JM_Score ./Smarthome_CV1/JM_epoch1_test_score.pkl \
+--BM_Score ./Smarthome_CV1/BM_epoch1_test_score.pkl \
+--val_sample ./Smarthome_CV1/test_CV1.txt \
+--benchmark Smarthome_CV1
+```
+
+
+# Contact
+For any questions, feel free to contact: ```liujf69@gmail.com``` or ```jinfullliu@tencent.com```

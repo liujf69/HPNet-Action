@@ -148,7 +148,31 @@ if __name__ == "__main__":
     gpu1_Name.extend(gpu4_Name)
     RGB_Score = match_score(gpu1_Name, RGB_Score, val_txt_file)
     
-    if args.benchmark == 'Smarthome_CS':
+    if args.benchmark == 'NTU60XSub': # [0.1, 0.1, 0.1, 0.1, 4.0]
+        Numclass = 60
+        Sample_Num = 16487
+        Score = RGB_Score
+        true_label = gen_label_ntu(val_txt_file)
+    
+    elif args.benchmark == 'NTU60XView': # [0.1, 0.1, 0.1, 0.1, 3.0]
+        Numclass = 60
+        Sample_Num = 18932
+        Score = RGB_Score
+        true_label = gen_label_ntu(val_txt_file)
+    
+    elif args.benchmark == 'NTU120XSub': # [0.1, 0.1, 0.1, 0.1, 6.0]
+        Numclass = 120
+        Sample_Num = 50919
+        Score = RGB_Score
+        true_label = gen_label_ntu(val_txt_file)
+    
+    elif args.benchmark == 'NTU120XSet': # [0.1, 0.1, 0.1, 0.1, 6.0]
+        Numclass = 120
+        Sample_Num = 59477
+        Score = RGB_Score
+        true_label = gen_label_ntu(val_txt_file)
+    
+    elif args.benchmark == 'Smarthome_CS':
         Numclass = 31
         Sample_Num = 5433
         Score = RGB_Score
@@ -158,10 +182,15 @@ if __name__ == "__main__":
         Sample_Num = 1901
         Score = RGB_Score
         true_label = gen_label_sh(val_txt_file, args.benchmark)
+    elif args.benchmark == 'Smarthome_CV2': 
+        Numclass = 19
+        Sample_Num = 1901
+        Score = RGB_Score
+        true_label = gen_label_sh(val_txt_file, args.benchmark) 
 
     Acc = Cal_Acc(Score, true_label)
     conf_matrix, class_accuracies, mean_perclass_accuracy = mean_class_accuracies(Score, true_label, Numclass)
 
     print('acc:', Acc)
-    print('mca:', mean_perclass_accuracy.item()) # CS 81.3, CV1 51.7, CV2 
+    print('mca:', mean_perclass_accuracy.item()) # CS 81.3, CV1 51.7, CV2 66.4 
     print("All Done!")
