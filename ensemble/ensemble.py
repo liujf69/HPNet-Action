@@ -235,7 +235,7 @@ if __name__ == "__main__":
         Score = Cal_Score(File, RGB_Score, Rate, Sample_Num, Numclass)
         true_label = gen_label_ntu(val_txt_file)
     
-    elif args.benchmark == 'Smarthome_CS': # [0.1, 0.1, 0.1, 0.1, 4.0]
+    elif args.benchmark == 'Smarthome_CS': # [0.1, 0.1, 0.1, 0.1, 11.0]
         Numclass = 31
         Sample_Num = 5433
         Score = Cal_Score(File, RGB_Score, Rate, Sample_Num, Numclass)
