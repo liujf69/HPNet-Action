@@ -196,6 +196,7 @@ class HP_estimation():
         persons_locs = self.detect_human(img_frame, model, 0) # detect Person
 
         skeletons = np.zeros((2, 1, 17, 2), dtype = np.float32) # M 1 17 2
+        origin_skeletons = np.zeros((2, 1, 17, 2), dtype = np.float32) # M 1 17 2
         y_list_0 = np.zeros((2, 1, 48, 64, 48), dtype = np.float32) # M 1 48 64 48
         x_list_1 = np.zeros((2, 1, 96, 32, 24), dtype = np.float32) # M 1 96 32 24
         x_list_2 = np.zeros((2, 1, 192, 16, 12), dtype = np.float32) # M 1 192 16 12
@@ -205,18 +206,24 @@ class HP_estimation():
         
         # no detect Person
         if persons_locs.shape[0] == 0: 
-            data_dict = {"skeleton": skeletons, "location": persons_locs} 
+            data_dict = {"skeleton": skeletons, "origin_ske": origin_skeletons, "location": persons_locs} 
             return data_dict, y_list_0, x_list_1, x_list_2, x_list_3, x_
 
         # target two person, but detect one person
         elif (num_person == 2) and persons_locs.shape[0] == 1: 
             loc1 = persons_locs[0]
             skeleton = np.zeros((1, 17, 2))
+            origin_skeleton = np.zeros((1, 17, 2))
             idx_x1, idx_y1, feature_list = self.estimate_pose(img_frame, model_pose, loc1)
             skeleton[0, :, 0] = idx_x1
             skeleton[0, :, 1] = idx_y1
             skeleton = skeleton.astype(np.float32) #[1, 17, 2]
             skeletons[0] = skeleton
+            
+            origin_idx_x1, origin_idx_y1 = self.get_origin(loc1, idx_x1, idx_y1)
+            origin_skeleton[0, :, 0] = origin_idx_x1
+            origin_skeleton[0, :, 1] = origin_idx_y1
+            origin_skeletons[0] = origin_skeleton
             
             y_list_0[0] = feature_list[0].cpu().detach().numpy()
             x_list_1[0] = feature_list[1].cpu().detach().numpy()
@@ -230,20 +237,27 @@ class HP_estimation():
             x_list_3[1] = x_list_3[0]
             x_[1] = x_[0]
             skeletons[1] = skeleton
+            origin_skeletons[1] = origin_skeleton
 
-            data_dict = {"skeleton": skeletons, "location": persons_locs} 
+            data_dict = {"skeleton": skeletons, "origin_ske": origin_skeletons, "location": persons_locs} 
             return data_dict, y_list_0, x_list_1, x_list_2, x_list_3, x_
 
         # one person
         elif num_person == 1:
             loc1 = persons_locs[0]
             skeleton = np.zeros((1, 17, 2))
+            origin_skeleton = np.zeros((1, 17, 2))
             idx_x1, idx_y1, feature_list = self.estimate_pose(img_frame, model_pose, loc1) 
 
             skeleton[0, :, 0] = idx_x1
             skeleton[0, :, 1] = idx_y1
             skeleton = skeleton.astype(np.float32) #[1, 17, 2]
             skeletons[0] = skeleton
+            
+            origin_idx_x1, origin_idx_y1 = self.get_origin(loc1, idx_x1, idx_y1)
+            origin_skeleton[0, :, 0] = origin_idx_x1
+            origin_skeleton[0, :, 1] = origin_idx_y1
+            origin_skeletons[0] = origin_skeleton
             
             y_list_0[0] = feature_list[0].cpu().detach().numpy()
             x_list_1[0] = feature_list[1].cpu().detach().numpy()
@@ -257,8 +271,9 @@ class HP_estimation():
             x_list_3[1] = x_list_3[0]
             x_[1] = x_[0]
             skeletons[1] = skeletons[0]
+            origin_skeletons[1] = origin_skeletons[0]
 
-            data_dict = {"skeleton": skeletons, "location": persons_locs} 
+            data_dict = {"skeleton": skeletons, "origin_ske": origin_skeletons, "location": persons_locs} 
             return data_dict, y_list_0, x_list_1, x_list_2, x_list_3, x_
     
         # target two person, detect person >= 2
@@ -266,6 +281,7 @@ class HP_estimation():
             for idx in range(num_person): # select one person for pose estimation
                 loc1 = persons_locs[idx]
                 skeleton = np.zeros((1, 17, 2))
+                origin_skeleton = np.zeros((1, 17, 2))
                 idx_x1, idx_y1, feature_list = self.estimate_pose(img_frame, model_pose, loc1)
 
                 skeleton[0, :, 0] = idx_x1
@@ -273,12 +289,16 @@ class HP_estimation():
                 skeleton = skeleton.astype(np.float32) #[1, 17, 2]
                 skeletons[idx] = skeleton
                 
+                origin_idx_x1, origin_idx_y1 = self.get_origin(loc1, idx_x1, idx_y1)
+                origin_skeletons[idx, :, :, 0] = origin_idx_x1
+                origin_skeletons[idx, :, :, 1] = origin_idx_y1
+                
                 y_list_0[idx] = feature_list[0].cpu().detach().numpy()
                 x_list_1[idx] = feature_list[1].cpu().detach().numpy()
                 x_list_2[idx] = feature_list[2].cpu().detach().numpy()
                 x_list_3[idx] = feature_list[3].cpu().detach().numpy()
                 x_[idx] = feature_list[4].cpu().detach().numpy()
-            data_dict = {"skeleton": skeletons, "location": persons_locs} 
+            data_dict = {"skeleton": skeletons, "origin_ske": origin_skeletons, "location": persons_locs} 
             return data_dict, y_list_0, x_list_1, x_list_2, x_list_3, x_
 
     def HPose_estimation(self, img_frame, num_person):
@@ -341,6 +361,9 @@ def main(args):
         save_path = os.path.join(args.save_path, name) 
         if not os.path.exists(save_path):
             os.makedirs(save_path)
+        save_frames_path = os.path.join(args.save_path, name) + "/" + "frames"
+        if not os.path.exists(save_frames_path):
+            os.makedirs(save_frames_path)
          
         num_person = 2 if(name[-3:] in Two_Body) else 1
         rgb_video_path = videos_path + "/" + name + '_rgb.avi'
@@ -351,7 +374,8 @@ def main(args):
         F_x_list_2 = []
         Pose_data = []
         F_x_ = []
-        
+        Origin_Pose_data = []
+        frame_idx = 0
         while True:
             ret, img = cap.read()  # read each video frame
             if (not ret): # read done or read error
@@ -359,14 +383,19 @@ def main(args):
             # get pose
             data_dict, y_list_0, x_list_1, x_list_2, x_list_3, x_ = model.HPose_estimation(img, num_person) # Here we just need x_list_1
             keypoints_2d = data_dict['skeleton'] # M 1 17 2
+            origin_keypoints_2d = data_dict['origin_ske'] # M 1 17 2
             Pose_data.append(keypoints_2d) # T M 1 17 2
+            Origin_Pose_data.append(origin_keypoints_2d) # T M 1 17 2
             F_y_list_0.append(y_list_0) # T M 1 48 64 48
             F_x_list_1.append(x_list_1) # T M 1 96 32 24
             F_x_list_2.append(x_list_2) # T M 1 192 16 12
             F_x_.append(x_) # T M 1 17 32 24
+            cv2.imwrite(save_frames_path + "/" + str(frame_idx) + ".jpg", img)
+            frame_idx += 1
 
         Pose_data = torch.from_numpy(np.array(Pose_data)).squeeze(2) # T M 17 2
         Save_pose_data = Pose_data # T M 17 2 # save
+        Origin_pose_data = torch.from_numpy(np.array(Origin_Pose_data)).squeeze(2) # T M 17 2
         F_y_list_0 = torch.from_numpy(np.array(F_y_list_0)).squeeze(2) # T M 48 64 48 # save
         F_x_list_1 = torch.from_numpy(np.array(F_x_list_1)).squeeze(2) # T M 96 32 24
         F_x_list_2 = torch.from_numpy(np.array(F_x_list_2)).squeeze(2) # T M 192 16 12
@@ -383,6 +412,7 @@ def main(args):
         save_pooled_features = pooled_features.reshape(T, M, 17, 96) # T M V C # save
                 
         np.save(save_path + "/" + "_pose.npy", Save_pose_data)
+        np.save(save_path + "/" + "_origin_pose.npy", Origin_pose_data)
         np.save(save_path + "/" + "_y_list_0.npy", F_y_list_0)
         np.save(save_path + "/" + "_x_list_1.npy", Save_F_x_list_1)
         np.save(save_path + "/" + "_x_list_2.npy", F_x_list_2)
@@ -449,10 +479,26 @@ def visualize_vector_matrix(matrix, output_path="vector_heatmap.png"):
     plt.savefig(output_path, bbox_inches='tight', pad_inches=0)
     plt.close()
     print(f"Heatmap saved to {output_path}")
- 
+
+def view_rgb_pose(img, origin_idx_x, origin_idx_y):
+    skeleton = [
+        [16, 14], [14, 12], [17, 15], [15, 13], [12, 13], [6, 12], [7, 13], [6, 7], [6, 8],
+        [7, 9], [8, 10], [9, 11], [1, 2], [1, 3], [2, 4], [3, 5], [1, 7], [1, 6]
+    ]
+    for idx in skeleton:
+        st_x = int(origin_idx_x[idx[0] - 1])
+        st_y = int(origin_idx_y[idx[0] - 1])
+        ed_x = int(origin_idx_x[idx[1] - 1])
+        ed_y = int(origin_idx_y[idx[1] - 1])
+        cv2.line(img, (st_x, st_y), (ed_x, ed_y), (0, 255, 0), 2)
+
+    # for i in range(17):
+    #     cv2.circle(img, (int(origin_idx_x[i]), int(origin_idx_y[i])), 5, (0,255,0), -1)
+    return img
+
 if __name__ == "__main__":    
     args = parse_args()
-    main(args)
+    # main(args)
     
     # visual test
     test_txt = np.loadtxt(args.sample_txt, dtype = str)
@@ -460,12 +506,14 @@ if __name__ == "__main__":
         print("Process ", name)
         output_path = os.path.join(args.save_path, name) 
         pose_data_path = os.path.join(output_path, "_pose.npy")
+        origin_pose_data_path = os.path.join(output_path, "_origin_pose.npy")
         y_list_0_path = os.path.join(output_path, "_y_list_0.npy")
         x_list_1_path = os.path.join(output_path, "_x_list_1.npy")
         x_list_2_path = os.path.join(output_path, "_x_list_2.npy")
         pooled_features_path = os.path.join(output_path, "_pooled.npy")
         x_path = os.path.join(output_path, "_x_.npy")
         pose_data = np.load(pose_data_path, allow_pickle = True) # T M V 2
+        origin_pose_data = np.load(origin_pose_data_path, allow_pickle = True) # T M V 2
         y_list_0 = np.load(y_list_0_path, allow_pickle = True) # T M 48 64 48
         x_list_1 = np.load(x_list_1_path, allow_pickle = True) # T M 96 32 24
         x_list_2 = np.load(x_list_2_path, allow_pickle = True) # T M 192 16 12
@@ -507,6 +555,14 @@ if __name__ == "__main__":
             pooled_features = pooled_features[T, M]
             save_pooled_features_path = output_path + '/' + str(T) + "_pooled_features.png"
             visualize_vector_matrix(pooled_features, save_pooled_features_path) 
+            
+            origin_pose = origin_pose_data[T, M]
+            img = cv2.imread(output_path + "/" + "frames" + "/" + str(T) + ".jpg")
+            origin_idx_x = origin_pose[:, 0]
+            origin_idx_y = origin_pose[:, 1]
+            rgb_pose = view_rgb_pose(img, origin_idx_x, origin_idx_y)
+            cv2.imwrite(output_path + "/" + str(T) + "_rgb_pose.jpg", rgb_pose)
+            
             print("debug pause")
             break # Test one frame
             
