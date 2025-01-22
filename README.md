@@ -109,4 +109,4 @@ python ensemble \
 
 
 # Contact
-For any questions, feel free to contact: ```liujf69@gmail.com``` or ```jinfullliu@tencent.com```
+For any questions, feel free to contact: ```liujf69@gmail.com```
