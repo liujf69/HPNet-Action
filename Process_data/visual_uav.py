@@ -1,4 +1,3 @@
-import os
 import pose_hrnet
 
 from yolo.augmentations import letterbox
@@ -20,6 +19,8 @@ from config import update_config
 import cv2
 import argparse
 import numpy as np
+import matplotlib.pyplot as plt
+import os
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Train keypoints network')
@@ -34,14 +35,13 @@ def parse_args():
                     nargs = argparse.REMAINDER)
     parser.add_argument('--videos_path',
                     help = "the path of rgb videos",
-                    default = "/data/liujinfu/dataset/Toyota-Smarthome/mp4")
+                    default = "/data/liujinfu/dataset/UAV/all_rgb/all_rgb")
     parser.add_argument('--save_path',
                     help = "the save path of pooling features",
-                    default = "/data/liujinfu/dataset/Toyota-Smarthome/pooling")
+                    default = "./visual_save")
     parser.add_argument('--sample_txt',
                         type = str,
-                        # default = '/data/liujinfu/dataset/Toyota-Smarthome/train_CS.txt'),
-                        default = '/data/liujinfu/TPAMI-24/Process_data/test.txt')
+                        default = './sample_txt/test.txt'),
     parser.add_argument('--device',
                         type = int,
                         default = 0)
@@ -237,7 +237,7 @@ class HP_estimation():
 
             data_dict = {"skeleton": skeletons, "origin_ske": origin_skeletons, "location": persons_locs} 
             return data_dict, y_list_0, x_list_1, x_list_2, x_list_3, x_
-
+        
     def HPose_estimation(self, img_frame):
         data_dict, y_list_0, x_list_1, x_list_2, x_list_3, x_ = self.extract_feature_from_one_person(self.model_detect, self.model_pose, img_frame)
         return data_dict, y_list_0, x_list_1, x_list_2, x_list_3, x_
@@ -247,7 +247,7 @@ class HP_estimation():
         y = loc[1]  # y1
         w = loc[2] - loc[0]  # x2-x1
         h = loc[3] - loc[1]  # y2-y1
-        image_size = (480, 640)
+        image_size = (1080,1920)
         c, s = self._xywh2cs(x, y, w, h, image_size)
         r = 0
         image_size = (192, 256)
@@ -290,19 +290,28 @@ def main(args):
     model = HP_estimation(device_ids = [args.device])
     samples_txt = args.sample_txt
     videos_path = args.videos_path
-    save_path = args.save_path
     samples_name = np.loadtxt(samples_txt, dtype=str)
 
     for _, name in enumerate(samples_name): # for each sample
         print("Processing " + name)
         
+        save_path = os.path.join(args.save_path, name) 
+        if not os.path.exists(save_path):
+            os.makedirs(save_path)
+        save_frames_path = os.path.join(args.save_path, name) + "/" + "frames"
+        if not os.path.exists(save_frames_path):
+            os.makedirs(save_frames_path)
+         
         rgb_video_path = os.path.join(videos_path, name)
         cap = cv2.VideoCapture(rgb_video_path)
         
+        F_y_list_0 = []
         F_x_list_1 = []
+        F_x_list_2 = []
         Pose_data = []
-        origin_Pose_data = []
-        
+        F_x_ = []
+        Origin_Pose_data = []
+        frame_idx = 0
         while True:
             ret, img = cap.read()  # read each video frame
             if (not ret): # read done or read error
@@ -310,38 +319,188 @@ def main(args):
             # get pose
             data_dict, y_list_0, x_list_1, x_list_2, x_list_3, x_ = model.HPose_estimation(img) # Here we just need x_list_1
             keypoints_2d = data_dict['skeleton'] # M 1 17 2
+            origin_keypoints_2d = data_dict['origin_ske'] # M 1 17 2
             Pose_data.append(keypoints_2d) # T M 1 17 2
+            Origin_Pose_data.append(origin_keypoints_2d) # T M 1 17 2
+            F_y_list_0.append(y_list_0) # T M 1 48 64 48
             F_x_list_1.append(x_list_1) # T M 1 96 32 24
-            origin_Pose_data.append(data_dict['origin_ske'])
+            F_x_list_2.append(x_list_2) # T M 1 192 16 12
+            F_x_.append(x_) # T M 1 17 32 24
+            cv2.imwrite(save_frames_path + "/" + str(frame_idx) + ".jpg", img)
+            frame_idx += 1
 
         Pose_data = torch.from_numpy(np.array(Pose_data)).squeeze(2) # T M 17 2
-        origin_Pose_data = torch.from_numpy(np.array(origin_Pose_data)).squeeze(2) # T M 17 2
+        Save_pose_data = Pose_data # T M 17 2 # save
+        Origin_pose_data = torch.from_numpy(np.array(Origin_Pose_data)).squeeze(2) # T M 17 2
+        F_y_list_0 = torch.from_numpy(np.array(F_y_list_0)).squeeze(2) # T M 48 64 48 # save
         F_x_list_1 = torch.from_numpy(np.array(F_x_list_1)).squeeze(2) # T M 96 32 24
+        F_x_list_2 = torch.from_numpy(np.array(F_x_list_2)).squeeze(2) # T M 192 16 12
+        F_x_ = torch.from_numpy(np.array(F_x_)).squeeze(2) # T M 96 32 24
+        
+        Save_F_x_list_1 = F_x_list_1 # T M 96 32 24 # save to visual
+        
         Pose_data[..., :2] /= torch.tensor([192//2, 256//2])
         Pose_data[..., :2] -= torch.tensor([1, 1]) # norm [-1, 1]
         T, M, V, C = Pose_data.shape # T M V C
         Pose_data = Pose_data.reshape(T*M, V, C) # TM V C        
         F_x_list_1 = F_x_list_1.reshape(T*M, F_x_list_1.shape[-3], F_x_list_1.shape[-2], F_x_list_1.shape[-1]) # TM C H W # Here we just process x_list_1
-        
-        feature = F.grid_sample(F_x_list_1, Pose_data.unsqueeze(-2), align_corners=True).squeeze(-1).permute(0, 2, 1).contiguous() \
-    
-        # resize to the same frames -> 64 frames
-        save_features = feature.reshape(T, M, 17, 96) # T M V C
-        save_features = save_features.permute(1, 2, 3, 0).reshape(2*17*96, T) # MVC T
-        save_features = save_features[None, None, :, :]
-        save_features = F.interpolate(save_features, size = (2*17*96, 64), mode = 'bilinear', align_corners = False)
-        save_features = save_features.squeeze(0).squeeze(0).reshape(2, 17, 96, 64) # M V C T
-        save_features = save_features.permute(-1, 0, 1, 2) # T M V C
-        save_features = np.array(save_features, dtype = np.float32) # T M V C
-        
-        # np.save(save_path + "/" + name.split(".mp4")[0] + ".npy", save_features)    
-        pose_save_path = "/data/liujinfu/dataset/Toyota-Smarthome/HPE_Pose" + "/" + name.split(".mp4")[0] + ".npy"  
-        np.save(pose_save_path, origin_Pose_data)
+        pooled_features = F.grid_sample(F_x_list_1, Pose_data.unsqueeze(-2), align_corners=True).squeeze(-1).permute(0, 2, 1).contiguous() # save
+        save_pooled_features = pooled_features.reshape(T, M, 17, 96) # T M V C # save
+                
+        np.save(save_path + "/" + "_pose.npy", Save_pose_data)
+        np.save(save_path + "/" + "_origin_pose.npy", Origin_pose_data)
+        np.save(save_path + "/" + "_y_list_0.npy", F_y_list_0)
+        np.save(save_path + "/" + "_x_list_1.npy", Save_F_x_list_1)
+        np.save(save_path + "/" + "_x_list_2.npy", F_x_list_2)
+        np.save(save_path + "/" + "_pooled.npy", save_pooled_features)
+        np.save(save_path + "/" + "_x_.npy", F_x_)
+                
     print("All done!")
     
-if __name__ == "__main__":
-    # nohup python extract_pooling_smarthome.py --sample_txt /data/liujinfu/dataset/Toyota-Smarthome/train_CS.txt --device 0 > ./outlog/Pooling_Smarthome_train_CS_0126.log 2>&1 &
-    # nohup python extract_pooling_smarthome.py --sample_txt /data/liujinfu/dataset/Toyota-Smarthome/validation_CS.txt --device 0 > ./outlog/Pooling_Smarthome_validation_CS_0126.log 2>&1 &
-    # nohup python extract_pooling_smarthome.py --sample_txt /data/liujinfu/dataset/Toyota-Smarthome/test_CS.txt --device 0 > ./outlog/Pooling_Smarthome_test_CS_0126.log 2>&1 &
+def visualize_confidence_map(tensor, heatmap_size=None, output_path='confidence_heatmap.png', type = "y_list_0"):
+    # 确保 tensor 的大小为 [C, H, W]
+    assert tensor.ndim == 3, "Input tensor must have 3 dimensions [C, H, W]"
+    C, H, W = tensor.shape
+    # 将 tensor 展平，并进行归一化
+    tensor_min = tensor.min()
+    tensor_max = tensor.max()
+    normalized_tensor = (tensor - tensor_min) / (tensor_max - tensor_min)  # 归一化到 [0, 1]
+    
+    if type == "y_list_0":
+        # 合并通道为单一的置信度图
+        confidence_map = np.sum(normalized_tensor, axis=0)  # shape: [H, W] # sum is better
+    elif type == "x_list_1":
+        confidence_map = np.max(normalized_tensor, axis=0)  # shape: [H, W] # max is better
+    elif type == "x_list_2":
+        confidence_map = np.max(normalized_tensor, axis=0)  # shape: [H, W]
+    elif type == "x_":
+        confidence_map = np.max(normalized_tensor, axis=0)  # shape: [H, W]
+    
+    # 将置信度图调整为目标大小
+    confidence_map_resized = cv2.resize(confidence_map, (heatmap_size[0], heatmap_size[1]))
+    
+    # if type == "x_list_1":
+    #     confidence_map_blurred = cv2.GaussianBlur(confidence_map_resized, (15, 15), sigmaX=5, sigmaY=5) # 高斯模糊平滑
+    confidence_map_blurred = np.clip(confidence_map_resized, 0, 1) # 归一化热图到 [0, 1] 范围
+
+    # 将热图转换为伪彩色图像
+    heatmap_colored = cv2.applyColorMap((confidence_map_blurred * 255).astype(np.uint8), cv2.COLORMAP_JET)
+    # 保存热图
+    plt.figure(figsize=(10, 10))
+    plt.imshow(cv2.cvtColor(heatmap_colored, cv2.COLOR_BGR2RGB))
+    plt.axis('off')
+    plt.savefig(output_path, bbox_inches='tight', pad_inches=0)
+    plt.close()
+    print(f"Heatmap saved to {output_path}")
+
+def visualize_vector_matrix(matrix, output_path="vector_heatmap.png"):
+    # 确保矩阵是 2D 的
+    assert matrix.ndim == 2, "Input matrix must have 2 dimensions [V, C]"
+
+    # 获取 V, C
+    V, C = matrix.shape
+
+    # 对矩阵进行归一化到 [0, 1]
+    matrix_min = matrix.min()
+    matrix_max = matrix.max()
+    normalized_matrix = (matrix - matrix_min) / (matrix_max - matrix_min)
+
+    # 转换为伪彩色图像
+    heatmap_colored = cv2.applyColorMap((normalized_matrix * 255).astype(np.uint8), cv2.COLORMAP_JET)
+
+    # 保存热图
+    plt.figure(figsize=(10, 5))
+    plt.imshow(cv2.cvtColor(heatmap_colored, cv2.COLOR_BGR2RGB))
+    plt.axis('off')
+    plt.savefig(output_path, bbox_inches='tight', pad_inches=0)
+    plt.close()
+    print(f"Heatmap saved to {output_path}")
+
+def view_rgb_pose(img, origin_idx_x, origin_idx_y):
+    skeleton = [
+        [16, 14], [14, 12], [17, 15], [15, 13], [12, 13], [6, 12], [7, 13], [6, 7], [6, 8],
+        [7, 9], [8, 10], [9, 11], [1, 2], [1, 3], [2, 4], [3, 5], [1, 7], [1, 6]
+    ]
+    for idx in skeleton:
+        st_x = int(origin_idx_x[idx[0] - 1])
+        st_y = int(origin_idx_y[idx[0] - 1])
+        ed_x = int(origin_idx_x[idx[1] - 1])
+        ed_y = int(origin_idx_y[idx[1] - 1])
+        cv2.line(img, (st_x, st_y), (ed_x, ed_y), (0, 255, 0), 2)
+
+    # for i in range(17):
+    #     cv2.circle(img, (int(origin_idx_x[i]), int(origin_idx_y[i])), 5, (0,255,0), -1)
+    return img
+
+if __name__ == "__main__":    
     args = parse_args()
     main(args)
+    
+    # visual test
+    test_txt = np.loadtxt(args.sample_txt, dtype = str)
+    for idx, name in enumerate(test_txt):
+        print("Process ", name)
+        output_path = os.path.join(args.save_path, name) 
+        pose_data_path = os.path.join(output_path, "_pose.npy")
+        origin_pose_data_path = os.path.join(output_path, "_origin_pose.npy")
+        y_list_0_path = os.path.join(output_path, "_y_list_0.npy")
+        x_list_1_path = os.path.join(output_path, "_x_list_1.npy")
+        x_list_2_path = os.path.join(output_path, "_x_list_2.npy")
+        pooled_features_path = os.path.join(output_path, "_pooled.npy")
+        x_path = os.path.join(output_path, "_x_.npy")
+        pose_data = np.load(pose_data_path, allow_pickle = True) # T M V 2
+        origin_pose_data = np.load(origin_pose_data_path, allow_pickle = True) # T M V 2
+        y_list_0 = np.load(y_list_0_path, allow_pickle = True) # T M 48 64 48
+        x_list_1 = np.load(x_list_1_path, allow_pickle = True) # T M 96 32 24
+        x_list_2 = np.load(x_list_2_path, allow_pickle = True) # T M 192 16 12
+        pooled_features = np.load(pooled_features_path, allow_pickle = True) # T M V 96
+        x_ = np.load(x_path, allow_pickle = True) # T M 16 64 48
+
+        Num_frames = y_list_0.shape[0]
+        Num_bodies = y_list_0.shape[1]
+        for T in range(Num_frames):
+            T = 200
+            M = 0 # body 1    
+            y_list_0_visual_data = y_list_0[T, M]
+            save_y_list_0_path = output_path + '/' + str(T) + "_y_list_0.png"
+            visualize_confidence_map(y_list_0_visual_data, 
+                                    heatmap_size = (y_list_0_visual_data.shape[1], y_list_0_visual_data.shape[2]), 
+                                    output_path = save_y_list_0_path,
+                                    type = "y_list_0")  
+            
+            x_list_1_visual_data = x_list_1[T, M]
+            save_x_list_1_path = output_path + '/' + str(T) + "_x_list_1.png"
+            visualize_confidence_map(x_list_1_visual_data, 
+                                    heatmap_size = (x_list_1_visual_data.shape[1], x_list_1_visual_data.shape[2]), 
+                                    output_path = save_x_list_1_path,
+                                    type = "x_list_1") 
+            
+            x_list_2_visual_data = x_list_2[T, M]
+            save_x_list_2_path = output_path + '/' + str(T) + "_x_list_2.png"
+            visualize_confidence_map(x_list_2_visual_data, 
+                                    heatmap_size = (x_list_2_visual_data.shape[1], x_list_2_visual_data.shape[2]), 
+                                    output_path = save_x_list_2_path,
+                                    type = "x_list_2")
+            
+            x_visual_data = x_[T, M]
+            save_x_path = output_path + '/' + str(T) + "_x.png"
+            visualize_confidence_map(x_visual_data, 
+                        heatmap_size = (x_visual_data.shape[1], x_visual_data.shape[2]), 
+                        output_path = save_x_path,
+                        type = "x_") 
+    
+            pooled_features = pooled_features[T, M]
+            save_pooled_features_path = output_path + '/' + str(T) + "_pooled_features.png"
+            visualize_vector_matrix(pooled_features, save_pooled_features_path) 
+            
+            origin_pose = origin_pose_data[T, M]
+            img = cv2.imread(output_path + "/" + "frames" + "/" + str(T) + ".jpg")
+            origin_idx_x = origin_pose[:, 0]
+            origin_idx_y = origin_pose[:, 1]
+            rgb_pose = view_rgb_pose(img, origin_idx_x, origin_idx_y)
+            cv2.imwrite(output_path + "/" + str(T) + "_rgb_pose.jpg", rgb_pose)
+            
+            print("debug pause")
+            break # Test one frame
+            
+    print("All done!")
