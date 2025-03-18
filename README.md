@@ -1,7 +1,7 @@
 # HPNet-Action
 Implementation of the paper “Heatmap Pooling for Action Recognition from Videos”.
 <div align=center>
-<img src ="./imgs/HP-Net.png" width="1800"/>
+<img src ="./imgs/HP-Net.png" width="1600"/>
 </div>
 
 # Download Dataset
@@ -53,7 +53,11 @@ CUDA_VISIBLE_DEVICES=1,2,3,4 python -m torch.distributed.launch --nproc_per_node
 ```
 # Test
 ```
-
+CUDA_VISIBLE_DEVICES=1,2,3,4 python -m torch.distributed.launch --master_port=25641 --nproc_per_node=4 hp_main.py \
+--config <your_config_path> \
+--resume <your_pretrained_weight_path> \
+--output <your_output_path> \
+--only_test True
 ```
 
 ## Ensemble
