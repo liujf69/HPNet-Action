@@ -8,6 +8,7 @@ Implementation of the paper “Heatmap Pooling for Action Recognition from Video
 1. **NTU-RGB+D 60** dataset from [https://rose1.ntu.edu.sg/dataset/actionRecognition/](https://rose1.ntu.edu.sg/dataset/actionRecognition/)
 2. **NTU-RGB+D 120** dataset from [https://rose1.ntu.edu.sg/dataset/actionRecognition/](https://rose1.ntu.edu.sg/dataset/actionRecognition/)
 3. **Toyota-Smarthome** dataset from [https://project.inria.fr/toyotasmarthome/](https://project.inria.fr/toyotasmarthome/)
+4. **UAV-Human** dataset from [https://github.com/sutdcv/UAV-Human?tab=readme-ov-file](https://github.com/sutdcv/UAV-Human?tab=readme-ov-file)
 
 # Process Dataset
 ```bash
