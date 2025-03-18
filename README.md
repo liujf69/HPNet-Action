@@ -1,5 +1,8 @@
 # HPNet-Action
 Implementation of the paper “Heatmap Pooling for Action Recognition from Videos”.
+<div align=center>
+<img src ="./imgs/HP-Net.png" width="1800"/>
+</div>
 
 # Download Dataset
 1. **NTU-RGB+D 60** dataset from [https://rose1.ntu.edu.sg/dataset/actionRecognition/](https://rose1.ntu.edu.sg/dataset/actionRecognition/)
@@ -34,10 +37,24 @@ python Etract_person_from_video_xxx.py --sample_txt <your_sample_txt> --videos_p
 # Example
 python Etract_person_from_video_ntu.py --sample_txt ./sample_txt/test.txt --videos_path ./data/videos --save_path ./output/pooling_feature --device 0
 ```
+<div align=center>
+<img src ="./imgs/Heatmap1.png" width="1000"/>
+<img src ="./imgs/Heatmap2.png" width="1000"/>
+</div>
 
 # Train
-
+```
+CUDA_VISIBLE_DEVICES=1,2,3,4 python -m torch.distributed.launch --nproc_per_node=4 hp_main.py \
+--config <your_config_path> \
+--distributed True \
+--accumulation-steps 4 \
+--output <your_output_path>
+--resume <your_pretrained_weight_path>
+```
 # Test
+```
+
+```
 
 ## Ensemble
 1. Ensemble one-stream (1s)
@@ -107,6 +124,8 @@ python ensemble \
 --benchmark Smarthome_CV1
 ```
 
+# Thanks
+Our project is based on the [TD-GCN](https://github.com/liujf69/TD-GCN-Gesture), [CTR-GCN](https://github.com/Uason-Chen/CTR-GCN), [X-CLIP](https://github.com/microsoft/VideoX/tree/master/X-CLIP), [HR-Net](https://github.com/leoxiaobin/deep-high-resolution-net.pytorch), [SimCC](https://github.com/leeyegy/SimCC).
 
 # Contact
 For any questions, feel free to contact: ```liujf69@gmail.com```
