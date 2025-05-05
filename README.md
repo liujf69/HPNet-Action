@@ -44,7 +44,7 @@ python Etract_person_from_video_ntu.py --sample_txt ./sample_txt/test.txt --vide
 </div>
 
 # Train
-## Train HP-Net
+## Train HP-Net (1s)
 ```
 CUDA_VISIBLE_DEVICES=1,2,3,4 python -m torch.distributed.launch --nproc_per_node=4 hp_main.py \
 --config <your_config_path> \
@@ -62,7 +62,7 @@ python main.py \
 ```
 
 # Test
-## Test HP-Net
+## Test HP-Net (1s)
 ```
 CUDA_VISIBLE_DEVICES=1,2,3,4 python -m torch.distributed.launch --master_port=25641 --nproc_per_node=4 hp_main.py \
 --config <your_config_path> \
