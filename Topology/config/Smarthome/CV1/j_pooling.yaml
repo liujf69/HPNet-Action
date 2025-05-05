@@ -1,0 +1,41 @@
+work_dir: ./work_dir/Smarthome/joint_pooling_0105
+
+# feeder
+feeder: dataset.feeder_sh.Feeder
+train_feeder_args: 
+  feature_data_path: /data/liujinfu/dataset/Toyota-Smarthome/pooling
+  sample_txt_path: /data/liujinfu/dataset/Toyota-Smarthome/train_CV1.txt
+  bone: False
+  vel: False
+  benchmark: CV1
+
+test_feeder_args:
+  feature_data_path: /data/liujinfu/dataset/Toyota-Smarthome/pooling
+  sample_txt_path: /data/liujinfu/dataset/Toyota-Smarthome/test_CV1.txt
+  bone: False
+  vel: False
+  benchmark: CV1
+
+# model
+model: model.ctrgcn_feature2.Model
+model_args:
+  num_class: 19
+  num_point: 17
+  num_person: 2
+  graph: graph.Simcc.Graph
+  graph_args:
+    labeling_mode: 'spatial'
+
+# optim
+weight_decay: 0.0004
+base_lr: 0.1
+lr_decay_rate: 0.1
+step: [35, 55]
+warm_up_epoch: 5
+
+# training
+device: [0]
+batch_size: 64
+test_batch_size: 64
+num_epoch: 65
+nesterov: True

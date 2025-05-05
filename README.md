@@ -44,6 +44,7 @@ python Etract_person_from_video_ntu.py --sample_txt ./sample_txt/test.txt --vide
 </div>
 
 # Train
+## Train HP-Net
 ```
 CUDA_VISIBLE_DEVICES=1,2,3,4 python -m torch.distributed.launch --nproc_per_node=4 hp_main.py \
 --config <your_config_path> \
@@ -52,13 +53,31 @@ CUDA_VISIBLE_DEVICES=1,2,3,4 python -m torch.distributed.launch --nproc_per_node
 --output <your_output_path>
 --resume <your_pretrained_weight_path>
 ```
+## Train Topology Model
+```
+cd Topology
+python main.py \
+--device <your_device_id> \
+--config <your_config_path> 
+```
+
 # Test
+## Test HP-Net
 ```
 CUDA_VISIBLE_DEVICES=1,2,3,4 python -m torch.distributed.launch --master_port=25641 --nproc_per_node=4 hp_main.py \
 --config <your_config_path> \
 --resume <your_pretrained_weight_path> \
 --output <your_output_path> \
 --only_test True
+```
+## Test Topology Model
+```
+cd Topology
+python main.py \
+--device <your_device_id> \
+--config <your_config_path> \
+--weights <your_weight_path> \
+--phase test 
 ```
 
 ## Ensemble

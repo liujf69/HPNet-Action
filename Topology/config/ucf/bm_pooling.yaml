@@ -1,0 +1,41 @@
+work_dir: ./work_dir/ucf/bonemotion_pooling_0907
+
+# feeder
+feeder: dataset.feeder_ucf.Feeder
+train_feeder_args: 
+  feature_data_path: /data/liujinfu/TPAMI-24/Process_data/output/pooling_feature_ucf
+  sample_txt_path: /data/liujinfu/TPAMI-24/TPAMI-24/GCN/dataset/ucf_train.txt
+  label_txt_path: /data/liujinfu/TPAMI-24/TPAMI-24/GCN/dataset/ucf_train_label.txt
+  bone: True
+  vel: True
+
+test_feeder_args:
+  feature_data_path: /data/liujinfu/TPAMI-24/Process_data/output/pooling_feature_ucf
+  sample_txt_path: /data/liujinfu/TPAMI-24/TPAMI-24/GCN/dataset/ucf_val.txt
+  label_txt_path: /data/liujinfu/TPAMI-24/TPAMI-24/GCN/dataset/ucf_val_label.txt
+  bone: True
+  vel: True
+
+# model
+model: model.ctrgcn_feature2.Model
+model_args:
+  num_class: 101
+  num_point: 17
+  num_person: 2
+  graph: graph.Simcc.Graph
+  graph_args:
+    labeling_mode: 'spatial'
+
+#optim
+weight_decay: 0.0004
+base_lr: 0.1
+lr_decay_rate: 0.1
+step: [35, 55]
+warm_up_epoch: 5
+
+# training
+device: [0]
+batch_size: 64
+test_batch_size: 64
+num_epoch: 65
+nesterov: True
