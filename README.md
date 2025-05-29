@@ -1,5 +1,17 @@
-# HPNet-Action
-Implementation of the paper “Heatmap Pooling for Action Recognition from Videos”.
+<p align="center">
+  <h1 align="center">Heatmap Pooling for Action Recognition from RGB Videos</h1>
+  <p align="center">
+    <a href="https://www.ece.pku.edu.cn/info/1046/2596.htm">Mengyuan Liu</a></sup>,
+    <a href="https://liujf69.github.io/">Jinfu Liu</a></sup>,
+    <a href="https://robot.tongji.edu.cn/info/1256/2363.htm">Yongkang Jiang</a></sup>,
+    <a href="https://robot.tongji.edu.cn/info/1256/2083.htm">Bin He</a></sup>,
+    <br>
+    </sup> Peking University, SZ DJI Technology Co., Ltd., TongJi University
+  </p>
+  <h3 align="center"><a href="https://github.com/liujf69/HPNet-Action">📄[Paper]</a> | <a href="https://github.com/liujf69/HPNet-Action">💻[Code]</a>  </h3> 
+  <div align="center"></div>
+</p>
+
 <div align=center>
 <img src ="./imgs/HP-Net.png" width="1600"/>
 </div>
