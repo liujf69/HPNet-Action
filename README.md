@@ -6,9 +6,10 @@
     <a href="https://robot.tongji.edu.cn/info/1256/2363.htm">Yongkang Jiang</a></sup>,
     <a href="https://robot.tongji.edu.cn/info/1256/2083.htm">Bin He</a></sup>,
     <br>
-    </sup> Peking University, SZ DJI Technology Co., Ltd., TongJi University
+    </sup> Peking University, DJI Technology Co., Ltd., TongJi University
   </p>
-  <h3 align="center"><a href="https://github.com/liujf69/HPNet-Action">📄[Paper]</a> | <a href="https://github.com/liujf69/HPNet-Action">💻[Code]</a>  </h3> 
+  <h2 align="center">IEEE Transactions on Pattern Analysis and Machine Intelligence (TPAMI), 2026</h2>
+  <h3 align="center"><a href="https://arxiv.org/abs/2512.03837">📄[Paper]</a> | <a href="https://github.com/liujf69/HPNet-Action">💻[Code]</a>  </h3> 
   <div align="center"></div>
 </p>
 
