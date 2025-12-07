@@ -164,5 +164,15 @@ python ensemble \
 # Thanks
 Our project is based on the [TD-GCN](https://github.com/liujf69/TD-GCN-Gesture), [CTR-GCN](https://github.com/Uason-Chen/CTR-GCN), [X-CLIP](https://github.com/microsoft/VideoX/tree/master/X-CLIP), [HR-Net](https://github.com/leoxiaobin/deep-high-resolution-net.pytorch), [SimCC](https://github.com/leeyegy/SimCC).
 
+# Citation
+```python
+@ARTICLE{hpnet,
+  author={Liu, Mengyuan and Liu, Jinfu and Jiang, Yongkang and He, bin},
+  title={Heatmap Pooling for Action Recognition from RGB Videos}, 
+  journal={IEEE Transactions on Pattern Analysis and Machine Intelligence (TPAMI)}, 
+  year={2025}
+}
+```
+
 # Contact
 For any questions, feel free to contact: ```liujf69@gmail.com```
