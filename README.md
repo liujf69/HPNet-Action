@@ -8,7 +8,7 @@
     <br>
     </sup> Peking University, DJI Technology Co., Ltd., TongJi University
   </p>
-  <h2 align="center">IEEE Transactions on Pattern Analysis and Machine Intelligence <br> (TPAMI), 2026</h2>
+  <h2 align="center">IEEE Transactions on Pattern Analysis and Machine Intelligence <br> (TPAMI), 2025</h2>
   <h3 align="center"><a href="https://arxiv.org/abs/2512.03837">📄[Paper]</a> | <a href="https://github.com/liujf69/HPNet-Action">💻[Code]</a>  </h3> 
   <div align="center"></div>
 </p>
