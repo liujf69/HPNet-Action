@@ -2,7 +2,7 @@
   <h1 align="center">Heatmap Pooling for Action Recognition from RGB Videos</h1>
   <p align="center">
     <a href="https://scholar.google.com.hk/citations?user=woX_4AcAAAAJ&hl=zh-CN">Mengyuan Liu</a></sup>,
-    <a href="https://liujf69.github.io/">Jinfu Liu</a></sup>,
+    <a href="https://scholar.google.com.hk/citations?hl=zh-CN&user=jdOJpl0AAAAJ">Jinfu Liu</a></sup>,
     <a href="https://scholar.google.com/citations?user=xp0Y7bsAAAAJ&hl=en">Yongkang Jiang</a></sup>,
     <a href="https://scholar.google.com.hk/citations?hl=zh-CN&user=aLoxqyAAAAAJ">Bin He</a></sup>,
     <br>
