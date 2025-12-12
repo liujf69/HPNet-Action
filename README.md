@@ -1,10 +1,10 @@
 <p align="center">
   <h1 align="center">Heatmap Pooling for Action Recognition from RGB Videos</h1>
   <p align="center">
-    <a href="https://www.ece.pku.edu.cn/info/1046/2596.htm">Mengyuan Liu</a></sup>,
+    <a href="https://scholar.google.com.hk/citations?user=woX_4AcAAAAJ&hl=zh-CN">Mengyuan Liu</a></sup>,
     <a href="https://liujf69.github.io/">Jinfu Liu</a></sup>,
-    <a href="https://robot.tongji.edu.cn/info/1256/2363.htm">Yongkang Jiang</a></sup>,
-    <a href="https://robot.tongji.edu.cn/info/1256/2083.htm">Bin He</a></sup>,
+    <a href="https://scholar.google.com/citations?user=xp0Y7bsAAAAJ&hl=en">Yongkang Jiang</a></sup>,
+    <a href="https://scholar.google.com.hk/citations?hl=zh-CN&user=aLoxqyAAAAAJ">Bin He</a></sup>,
     <br>
     </sup> Peking University, DJI Technology Co., Ltd., TongJi University
   </p>
